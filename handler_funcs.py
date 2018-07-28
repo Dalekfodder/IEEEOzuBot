@@ -8,27 +8,20 @@ def start_handler_func(bot, update):
 
 
 def question_handler_func(bot, update, args):
-    final_response = ""
-
-    for x in args:
-        db_response = Answers.select().where(Answers.tag == x)
+    for x in set(args):
+        db_response = Answers.select().where(Answers.tag == x.lower())
         try:
             db_response.get()
         except Answers.DoesNotExist:
-            print("Non Existant Value")
+            print("Non Existant Value 1")
         else:
-            final_response += "Answers about " + x + ":"
+            final_response = "Answers about " + x.lower() + ":"
 
             for response in db_response:
                 final_response += "\n" + response.answer
                 print(response)
 
-
-    if final_response is not "":
-        update.message.reply_text(text='{}'.format(final_response))
-    else:
-        update.message.reply_text(text='Non Existant Value')
-
+            update.message.reply_text(text='{}'.format(final_response))
     print(update.message.from_user)
 
 
