@@ -1,5 +1,6 @@
-import sqlite3
-import dbconnection as db
+from settings import DB_ADDRESS
+from model import Answers, Admins
+import peewee
 
 
 def start_handler_func(bot, update):
@@ -7,38 +8,35 @@ def start_handler_func(bot, update):
 
 
 def question_handler_func(bot, update, args):
-    conn = db.DbConnection('cevap.db')
-
     final_response = ""
 
     for x in args:
+        db_response = Answers.select().where(Answers.tag == x)
         try:
-            conn.cursor.execute('''SELECT answers.cevap FROM answers WHERE tags=? ''', [x])
-        except sqlite3.Error as err:
-            print(err)
+            db_response.get()
+        except Answers.DoesNotExist:
+            print("Non Existant Value")
+        else:
+            final_response += "Answers about " + x + ":"
 
-        response1 = conn.cursor.fetchone()
-        if response1 is not None:
-            final_response += response1[0]
-            print(final_response)
+            for response in db_response:
+                final_response += "\n" + response.answer
+                print(response)
+
 
     if final_response is not "":
         update.message.reply_text(text='{}'.format(final_response))
     else:
-        update.message.reply_text(text='öyle bişe yog')
+        update.message.reply_text(text='Non Existant Value')
 
     print(update.message.from_user)
 
 
-def add_question_handler(bot, update, args):
+def add_admin_handler_func(bot, update, args):
     pass
 
 
-def authorize_handler(bot, update, args):
-    pass
-
-
-def sticker_handler(bot, update):
+def add_answer_handler(bot, update, args):
     pass
 
 
