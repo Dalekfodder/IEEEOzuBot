@@ -11,12 +11,12 @@ class BaseModel(peewee.Model):
 
 class Answers(BaseModel):
     tag = peewee.TextField()
-
     answer = peewee.TextField()
 
 
 class Admins(BaseModel):
-    user_name = peewee.TextField()
+    user_name = peewee.TextField(unique=True)
+    added_by = peewee.TextField()
 
 
 if __name__ == '__main__':
