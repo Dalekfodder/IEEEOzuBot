@@ -1,28 +1,31 @@
 from settings import DB_ADDRESS
 from model import Answers, Admins
 import peewee
-
+import telegram
+import telegram.ext
 
 def start_handler_func(bot, update):
     update.message.reply_text(text='ok')
 
 
 def question_handler_func(bot, update, args):
+    final_response = "No such thing."
     for x in set(args):
         db_response = Answers.select().where(Answers.tag == x.lower())
         try:
             db_response.get()
         except Answers.DoesNotExist:
-            update.message.reply_text(text='There is no such thing.')
             print("Non Existant Value")
+            continue
         else:
             final_response = "Answers about " + x.lower() + ":"
 
-            for response in db_response:
-                final_response += "\n" + response.answer
+        for response in db_response:
+            final_response += "\n" + response.answer
 
-            update.message.reply_text(text='{}'.format(final_response))
+    update.message.reply_text(text='{}'.format(final_response))
     print(update.message.from_user)
+    print(update.message.chat)
 
 
 def is_admin(update):
@@ -50,14 +53,21 @@ def add_admin_handler_func(bot, update, args):
 
     update.message.reply_text(text='Admin added.')
 
+def sticker_handler_func(bot, update):
+    try:
+        bot.delete_message(message_id=update.message.message_id, chat_id=update.message.chat_id)
+    except telegram.error.BadRequest:
+        update.message(text='Atamazki')
+        return
+
+    bot.sendMessage(chat_id=update.message.from_user['id'], text="Kardsm stikir atma diyrm")
+    print(update.message.from_user)
+    print(update.message.chat)
+
 
 def add_answer_handler(bot, update, args):
     pass
 
 
 def on_join_handler(bot, update):
-    pass
-
-
-def davet_at(bot, update):
     pass
