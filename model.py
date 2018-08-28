@@ -1,4 +1,5 @@
 import peewee
+
 from settings import DB_ADDRESS
 
 db = peewee.SqliteDatabase(DB_ADDRESS)
@@ -10,7 +11,8 @@ class BaseModel(peewee.Model):
 
 
 class Answers(BaseModel):
-    tag = peewee.TextField()
+    category_name = peewee.TextField()
+    tag_name = peewee.TextField()
     answer = peewee.TextField()
 
 
