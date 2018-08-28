@@ -13,15 +13,20 @@ dispatcher.add_handler(CommandHandler('adminekle', add_admin_handler, pass_args=
 dispatcher.add_handler(CommandHandler('soruekle', add_answer_handler, pass_args=True))
 dispatcher.add_handler(MessageHandler(Filters.sticker, sticker_handler))
 
+
 dispatcher.add_handler(
-    ConversationHandler(entry_points=[CommandHandler('soru', question_handler)],
+    ConversationHandler(entry_points=[CommandHandler('soru', main_question_handler)],
                         states={
                             CATEGORIES: [CallbackQueryHandler(callback_handler_categories, pattern="^cat")],
 
                             TAGS: [CallbackQueryHandler(callback_handler_tags, pattern="^tag"),
-                                   CallbackQueryHandler(callback_handler_back, pattern="^geri")],
+                                   CallbackQueryHandler(main_question_handler, pattern="^back")],
+
+                            FINAL: [CallbackQueryHandler(callback_handler_final, pattern="^done"),
+                                    CallbackQueryHandler(main_question_handler, pattern="^bad")]
+
 
                         },
-                        fallbacks=[CallbackQueryHandler(callback_handler_categories, pattern="^geri")]))
+                        fallbacks=[CallbackQueryHandler(callback_handler_custom_question)]))
 
 updater.start_polling()
